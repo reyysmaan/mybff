@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Practice Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .level-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .level-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 80%;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: #667eea;
+            color: white;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background: #e3f2fd;
+            color: #333;
+            margin-left: auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .record-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .record-btn:hover {
+            background: #45a049;
+        }
+
+        .record-btn.recording {
+            background: #f44336;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .stop-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: #e68900;
+        }
+
+        .translate-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .translate-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .translate-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .translate-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .translate-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .translate-btn:hover {
+            background: #5568d3;
+        }
+
+        .translation-result {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            min-height: 50px;
+            border: 2px solid #667eea;
+        }
+
+        .status {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .word-tooltip {
+            cursor: pointer;
+            border-bottom: 2px dotted #667eea;
+            position: relative;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+
+        .word-tooltip:hover .tooltip-content {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .mic-icon::before {
+            content: "🎤";
+        }
+
+        .stop-icon::before {
+            content: "⏹️";
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .chat-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗣️ English Practice Bot</h1>
+            <p>Practice your English speaking skills with AI!</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active" data-level="beginner">Beginner</button>
+            <button class="level-btn" data-level="intermediate">Intermediate</button>
+            <button class="level-btn" data-level="advanced">Advanced</button>
+        </div>
+
+        <div class="level-selector" style="margin-bottom: 20px;">
+            <span style="margin-right: 10px; color: #667eea; font-weight: bold;">🔊 Bot Voice:</span>
+            <button class="level-btn active" data-voice="female">Female 👩</button>
+            <button class="level-btn" data-voice="male">Male 👨</button>
+        </div>
+
+        <div class="status" id="status">Click "Start Recording" to begin speaking</div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                Hello! What's your name? I'd love to know!
+            </div>
+        </div>
+
+        <div class="translate-section" style="background: #e8f5e9; border: 2px solid #4CAF50; margin-bottom: 20px;">
+            <h3 style="color: #4CAF50;">💡 Example Answer</h3>
+            <div id="exampleAnswer" style="font-size: 18px; margin-bottom: 15px; color: #333;">
+                "My name is [your name]"
+            </div>
+            <button class="translate-btn" id="pronounceBtn" style="background: #4CAF50;">
+                🔊 Listen to Pronunciation
+            </button>
+        </div>
+
+        <div class="controls">
+            <button class="btn record-btn" id="recordBtn">
+                <span class="mic-icon"></span>
+                Start Recording
+            </button>
+            <button class="btn stop-btn" id="stopBtn" style="display: none;">
+                <span class="stop-icon"></span>
+                Stop Recording
+            </button>
+        </div>
+
+        <div class="translate-input" style="margin-bottom: 20px;">
+            <input type="text" id="textInput" placeholder="Or type your response here...">
+            <button class="translate-btn" id="sendBtn">Send ✉️</button>
+        </div>
+
+        <div class="translate-section">
+            <h3>📖 English to Malay Translator</h3>
+            <div class="translate-input">
+                <input type="text" id="translateInput" placeholder="Type an English word or phrase...">
+                <button class="translate-btn" id="translateBtn">Translate</button>
+            </div>
+            <div class="translation-result" id="translationResult">
+                Translation will appear here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dictionary for English to Malay translations (basic words)
+        const dictionary = {
+            "hello": "helo / hai",
+            "goodbye": "selamat tinggal",
+            "thank you": "terima kasih",
+            "please": "tolong / sila",
+            "yes": "ya",
+            "no": "tidak",
+            "name": "nama",
+            "how": "bagaimana",
+            "what": "apa",
+            "where": "di mana",
+            "when": "bila",
+            "who": "siapa",
+            "why": "mengapa",
+            "good": "baik",
+            "bad": "buruk",
+            "happy": "gembira",
+            "sad": "sedih",
+            "eat": "makan",
+            "drink": "minum",
+            "water": "air",
+            "food": "makanan",
+            "house": "rumah",
+            "school": "sekolah",
+            "book": "buku",
+            "friend": "kawan",
+            "family": "keluarga",
+            "mother": "ibu",
+            "father": "bapa",
+            "brother": "abang / adik lelaki",
+            "sister": "kakak / adik perempuan",
+            "teacher": "guru",
+            "student": "pelajar",
+            "morning": "pagi",
+            "afternoon": "petang",
+            "evening": "malam",
+            "night": "malam",
+            "today": "hari ini",
+            "yesterday": "semalam",
+            "tomorrow": "esok",
+            "help": "tolong / bantuan",
+            "sorry": "maaf",
+            "welcome": "selamat datang",
+            "beautiful": "cantik",
+            "big": "besar",
+            "small": "kecil",
+            "hot": "panas",
+            "cold": "sejuk",
+            "love": "cinta / sayang"
+        };
+
+        // Conversation templates by level with expected keywords and example answers
+        const conversations = {
+            beginner: [
+                {
+                    question: "Hello! What's your name? I'd love to know!",
+                    keywords: ["name", "my name", "i am", "i'm", "call me"],
+                    example: "My name is [your name]. For example: My name is Sarah."
+                },
+                {
+                    question: "Nice to meet you, {name}! How are you feeling today?",
+                    keywords: ["fine", "good", "great", "okay", "happy", "sad", "tired", "well"],
+                    example: "I am fine, thank you. OR I'm feeling great today!"
+                },
+                {
+                    question: "That's wonderful to hear! How old are you?",
+                    keywords: ["years old", "year old", "age", "10", "11", "12", "13", "14", "15", "16", "17", "18"],
+                    example: "I am 15 years old. OR I'm fifteen."
+                },
+                {
+                    question: "Great! Tell me, what's your favorite color?",
+                    keywords: ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "orange", "color", "colour"],
+                    example: "My favorite color is blue. OR I like green."
+                },
+                {
+                    question: "Nice choice! Do you like studying English? Why or why not?",
+                    keywords: ["yes", "no", "like", "love", "enjoy", "fun", "interesting", "difficult", "hard", "easy"],
+                    example: "Yes, I like English because it is interesting. OR I enjoy learning English."
+                },
+                {
+                    question: "That's great! What kind of food do you like to eat?",
+                    keywords: ["rice", "noodles", "pizza", "chicken", "fish", "fruit", "vegetables", "food", "like", "love"],
+                    example: "I like to eat pizza and chicken. OR My favorite food is nasi lemak."
+                },
+                {
+                    question: "Yummy! Tell me about your family. Who lives with you?",
+                    keywords: ["mother", "father", "mom", "dad", "sister", "brother", "family", "parents", "siblings"],
+                    example: "I live with my mother, father, and one brother. OR I have a small family."
+                },
+                {
+                    question: "That's lovely! What do you like to do for fun? Any hobbies?",
+                    keywords: ["play", "read", "watch", "listen", "music", "games", "sports", "drawing", "hobby"],
+                    example: "I like to play games and read books. OR My hobby is playing football."
+                }
+            ],
+            intermediate: [
+                {
+                    question: "Hi there! Can you describe what you usually do every morning?",
+                    keywords: ["wake up", "breakfast", "shower", "brush", "school", "morning", "routine"],
+                    example: "Every morning, I wake up at 7 AM, brush my teeth, eat breakfast, and go to school."
+                },
+                {
+                    question: "Interesting routine! What did you do last weekend? Tell me about it!",
+                    keywords: ["went", "played", "watched", "visited", "stayed", "weekend", "saturday", "sunday"],
+                    example: "Last weekend, I went to the mall with my family and watched a movie."
+                },
+                {
+                    question: "Sounds fun! Can you tell me about your best friend? What makes them special?",
+                    keywords: ["friend", "kind", "funny", "helpful", "smart", "like", "together"],
+                    example: "My best friend is very kind and funny. We like to play together after school."
+                },
+                {
+                    question: "That's wonderful! What do you want to be when you grow up?",
+                    keywords: ["want", "become", "doctor", "teacher", "engineer", "future", "dream", "job"],
+                    example: "I want to become a teacher because I enjoy helping people learn."
+                },
+                {
+                    question: "Great ambition! Describe your favorite place. Where is it and why do you like it?",
+                    keywords: ["place", "park", "home", "beach", "library", "peaceful", "beautiful", "like", "because"],
+                    example: "My favorite place is the park near my house because it is peaceful and beautiful."
+                },
+                {
+                    question: "Nice! What kind of music or movies do you enjoy?",
+                    keywords: ["like", "enjoy", "music", "movie", "song", "action", "comedy", "pop", "rock"],
+                    example: "I enjoy pop music and action movies because they are exciting."
+                }
+            ],
+            advanced: [
+                {
+                    question: "Hello! In your opinion, why is learning languages important in today's world?",
+                    keywords: ["communicate", "important", "world", "understand", "connect", "culture", "global"],
+                    example: "Learning languages is important because it helps us communicate with people from different cultures and understand the world better."
+                },
+                {
+                    question: "Well said! Can you tell me about a challenge you faced recently and how you overcame it?",
+                    keywords: ["challenge", "difficult", "problem", "solved", "overcame", "learned", "experience"],
+                    example: "Recently, I struggled with math homework, but I overcame it by asking my teacher for help and practicing more."
+                },
+                {
+                    question: "That shows good problem-solving! What do you think are the advantages and disadvantages of social media?",
+                    keywords: ["advantage", "disadvantage", "social media", "connect", "information", "distraction", "privacy"],
+                    example: "Social media helps us stay connected with friends, but it can also be distracting and affect our privacy."
+                },
+                {
+                    question: "Interesting perspective! If you could travel anywhere in the world, where would you go and why?",
+                    keywords: ["travel", "country", "visit", "culture", "experience", "learn", "explore"],
+                    example: "I would travel to Japan because I want to experience their unique culture and try authentic Japanese food."
+                },
+                {
+                    question: "Sounds amazing! How has technology changed the way students learn today?",
+                    keywords: ["technology", "internet", "online", "computer", "learning", "education", "changed"],
+                    example: "Technology has made learning easier through online resources and educational apps that help us study anytime, anywhere."
+                }
+            ]
+        };
+
+        let currentLevel = 'beginner';
+        let conversationIndex = 0;
+        let messagesCount = 0;
+        let recognition;
+        let isRecording = false;
+        let selectedVoice = 'female';
+        let userName = '';
+        let currentExampleAnswer = '';
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                
+                if (!SpeechRecognition) {
+                    console.error('Speech recognition not available');
+                    return false;
+                }
+                
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    addMessage(transcript, 'user');
+                    processUserInput(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                        updateStatus('❌ Microphone permission denied. Please allow microphone access and refresh.');
+                    } else if (event.error === 'no-speech') {
+                        updateStatus('No speech detected. Please try again.');
+                    } else {
+                        updateStatus('Error: ' + event.error + '. Please try again.');
+                    }
+                    stopRecording();
+                };
+
+                recognition.onend = () => {
+                    stopRecording();
+                };
+                
+                return true;
+            } catch (error) {
+                console.error('Error initializing speech recognition:', error);
+                return false;
+            }
+        }
+        
+        const speechSupported = initSpeechRecognition();
+
+        // Text-to-Speech with voice selection
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85;
+            utterance.pitch = 1;
+            
+            // Try to find appropriate voice
+            const voices = window.speechSynthesis.getVoices();
+            
+            if (selectedVoice === 'female') {
+                const femaleVoice = voices.find(voice => 
+                    voice.name.includes('Female') || 
+                    voice.name.includes('Samantha') ||
+                    voice.name.includes('Google US English Female') ||
+                    voice.name.includes('Microsoft Zira')
+                );
+                if (femaleVoice) utterance.voice = femaleVoice;
+            } else {
+                const maleVoice = voices.find(voice => 
+                    voice.name.includes('Male') || 
+                    voice.name.includes('Google US English Male') ||
+                    voice.name.includes('Microsoft David')
+                );
+                if (maleVoice) utterance.voice = maleVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // Load voices
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            messagesCount++;
+            updateProgress();
+        }
+
+        // Update example answer display
+        function updateExampleAnswer(example) {
+            currentExampleAnswer = example;
+            document.getElementById('exampleAnswer').textContent = example;
+        }
+
+        // Process user input with intelligent checking
+        function processUserInput(input) {
+            const currentConvo = conversations[currentLevel][conversationIndex];
+            const lowerInput = input.toLowerCase();
+            
+            // Save user name from first question
+            if (conversationIndex === 0) {
+                const nameMatch = input.match(/(?:my name is|i am|i'm|call me)\s+(\w+)/i);
+                if (nameMatch) {
+                    userName = nameMatch[1];
+                }
+            }
+            
+            // Check if answer is relevant to the question
+            const hasKeyword = currentConvo.keywords.some(keyword => 
+                lowerInput.includes(keyword.toLowerCase())
+            );
+            
+            setTimeout(() => {
+                let botResponse = '';
+                
+                if (hasKeyword) {
+                    // Correct answer - give praise!
+                    const praises = [
+                        "Excellent! Great pronunciation! ",
+                        "Very good! Well done! ",
+                        "Perfect! You said that very clearly! ",
+                        "Wonderful answer! ",
+                        "Amazing! Keep it up! ",
+                        "Great job! I understood you perfectly! ",
+                        "Fantastic! You're doing really well! "
+                    ];
+                    
+                    botResponse = praises[Math.floor(Math.random() * praises.length)];
+                    
+                    // Move to next question
+                    conversationIndex++;
+                    
+                    if (conversationIndex < conversations[currentLevel].length) {
+                        const nextConvo = conversations[currentLevel][conversationIndex];
+                        let nextQuestion = nextConvo.question;
+                        
+                        // Personalize with user's name if available
+                        if (userName) {
+                            nextQuestion = nextQuestion.replace('{name}', userName);
+                        }
+                        
+                        botResponse += nextQuestion;
+                        
+                        // Update example answer
+                        updateExampleAnswer(nextConvo.example);
+                    } else {
+                        // Completed level
+                        const congratsMessages = {
+                            beginner: "🎉 Amazing work! You've completed the beginner level! You're speaking so well! Ready to try intermediate level?",
+                            intermediate: "🌟 Excellent progress! You've finished intermediate level! Your English is getting better! Want to challenge yourself with advanced level?",
+                            advanced: "🏆 Outstanding! You've completed all levels! Your English speaking skills are impressive! Keep practicing every day!"
+                        };
+                        
+                        botResponse += congratsMessages[currentLevel];
+                        conversationIndex = 0;
+                    }
+                } else {
+                    // Answer doesn't match the question - give correction
+                    botResponse = "Hmm, I don't think that answers my question. ";
+                    
+                    // Give specific feedback based on what was asked
+                    if (conversationIndex === 0 && !lowerInput.includes('name')) {
+                        botResponse += "I asked about your NAME. Can you tell me your name? ";
+                    } else if (conversationIndex === 1 && !lowerInput.includes('fine') && !lowerInput.includes('good') && !lowerInput.includes('feel')) {
+                        botResponse += "I asked HOW YOU ARE FEELING. Are you fine? Good? Happy? ";
+                    } else if (conversationIndex === 2 && !lowerInput.includes('year') && !lowerInput.includes('old') && !lowerInput.includes('age')) {
+                        botResponse += "I asked about your AGE. How old are you? ";
+                    } else {
+                        botResponse += "Let me ask again: ";
+                    }
+                    
+                    botResponse += currentConvo.question;
+                    
+                    if (userName) {
+                        botResponse = botResponse.replace('{name}', userName);
+                    }
+                    
+                    // Keep same example answer
+                    updateExampleAnswer(currentConvo.example);
+                }
+                
+                addMessage(botResponse, 'bot');
+                speak(botResponse);
+            }, 1000);
+        }
+
+        // Recording controls
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            if (!speechSupported) {
+                updateStatus('❌ Speech recognition not supported. Please use Chrome or Edge browser.');
+                alert('Speech recognition is not supported in this browser.\n\nPlease use:\n✅ Google Chrome\n✅ Microsoft Edge\n\nMake sure you are using the desktop version.');
+                return;
+            }
+            
+            if (recognition) {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('recordBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'flex';
+                    document.getElementById('recordBtn').classList.add('recording');
+                    updateStatus('🎤 Listening... Speak now!');
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    updateStatus('❌ Could not start recording. Please refresh and try again.');
+                    stopRecording();
+                }
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            stopRecording();
+        });
+
+        function stopRecording() {
+            if (recognition && isRecording) {
+                recognition.stop();
+            }
+            isRecording = false;
+            document.getElementById('recordBtn').style.display = 'flex';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('recordBtn').classList.remove('recording');
+            updateStatus('Click "Start Recording" to speak again');
+        }
+
+        // Level selection
+        document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Check if it's a level button or voice button
+                if (btn.dataset.level) {
+                    // Level selection
+                    document.querySelectorAll('[data-level]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentLevel = btn.dataset.level;
+                    conversationIndex = 0;
+                    messagesCount = 0;
+                    userName = '';
+                    updateProgress();
+                    
+                    document.getElementById('chatContainer').innerHTML = '';
+                    const firstConvo = conversations[currentLevel][0];
+                    const welcomeMessage = `Let's practice ${currentLevel} level English! ${firstConvo.question}`;
+                    addMessage(welcomeMessage, 'bot');
+                    speak(welcomeMessage);
+                    updateExampleAnswer(firstConvo.example);
+                } else if (btn.dataset.voice) {
+                    // Voice selection
+                    document.querySelectorAll('[data-voice]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedVoice = btn.dataset.voice;
+                    
+                    // Test the new voice
+                    const testMessage = selectedVoice === 'female' 
+                        ? "Hello! I'm your female voice assistant." 
+                        : "Hello! I'm your male voice assistant.";
+                    speak(testMessage);
+                }
+            });
+        });
+
+        // Pronounce example answer button
+        document.getElementById('pronounceBtn').addEventListener('click', () => {
+            if (currentExampleAnswer) {
+                speak(currentExampleAnswer);
+                updateStatus('🔊 Listen carefully and then try to repeat it!');
+            }
+        });
+
+        // Translation
+        document.getElementById('translateBtn').addEventListener('click', translateWord);
+        document.getElementById('translateInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') translateWord();
+        });
+
+        function translateWord() {
+            const input = document.getElementById('translateInput').value.toLowerCase().trim();
+            const resultDiv = document.getElementById('translationResult');
+            
+            if (!input) {
+                resultDiv.innerHTML = '⚠️ Please enter a word or phrase to translate.';
+                return;
+            }
+
+            if (dictionary[input]) {
+                resultDiv.innerHTML = `
+                    <strong>"${input}"</strong> in Malay: <br>
+                    <span style="color: #667eea; font-size: 20px; font-weight: bold;">${dictionary[input]}</span>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    ℹ️ Translation for "<strong>${input}</strong>" not found in basic dictionary. 
+                    <br><small>Try searching online or ask your teacher!</small>
+                `;
+            }
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function updateProgress() {
+            const totalMessages = conversations[currentLevel].length;
+            const progress = Math.min((messagesCount / (totalMessages * 2)) * 100, 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Initial speech
+        window.addEventListener('load', () => {
+            const firstConvo = conversations[currentLevel][0];
+            speak(firstConvo.question);
+            updateExampleAnswer(firstConvo.example);
+            
+            // Show browser compatibility message
+            if (!speechSupported) {
+                setTimeout(() => {
+                    updateStatus('⚠️ Voice input not available. Please use text input or switch to Chrome/Edge browser.');
+                }, 2000);
+            }
+        });
+
+        // Text input functionality
+        document.getElementById('sendBtn').addEventListener('click', sendTextMessage);
+        document.getElementById('textInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendTextMessage();
+        });
+
+        function sendTextMessage() {
+            const input = document.getElementById('textInput').value.trim();
+            if (input) {
+                addMessage(input, 'user');
+                processUserInput(input);
+                document.getElementById('textInput').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
