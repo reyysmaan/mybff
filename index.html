@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBFF - My Best Friend Forever</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #FF6B9D;
+            margin-bottom: 10px;
+            font-size: 42px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .level-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            padding: 10px 20px;
+            border: 2px solid #FF6B9D;
+            background: white;
+            color: #FF6B9D;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .level-btn:hover {
+            background: #FF6B9D;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .level-btn.active {
+            background: #FF6B9D;
+            color: white;
+        }
+
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 80%;
+            position: relative;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: linear-gradient(135deg, #A8E6CF 0%, #81C784 100%);
+            color: #2E7D32;
+            margin-right: auto;
+            font-weight: 500;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #FFD6E8 0%, #FFC1E3 100%);
+            color: #D81B60;
+            margin-left: auto;
+            font-weight: 500;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .record-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #663300;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+        }
+
+        .record-btn:hover {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            transform: scale(1.05);
+        }
+
+        .record-btn.recording {
+            background: #f44336;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .stop-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: #e68900;
+        }
+
+        .translate-section {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .translate-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .translate-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .translate-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .translate-btn {
+            background: #FF6B9D;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .translate-btn:hover {
+            background: #E91E63;
+            transform: scale(1.05);
+        }
+
+        .translation-result {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            min-height: 50px;
+            border: 2px solid #667eea;
+        }
+
+        .status {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .word-tooltip {
+            cursor: pointer;
+            border-bottom: 2px dotted #667eea;
+            position: relative;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 5px;
+        }
+
+        .word-tooltip:hover .tooltip-content {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #FF6B9D, #FFD700, #A8E6CF, #667eea);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .mic-icon::before {
+            content: "🎤";
+        }
+
+        .stop-icon::before {
+            content: "⏹️";
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .chat-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💙 MyBFF 💙</h1>
+            <p style="font-size: 18px;">Your Best Friend Forever for English Practice! 🌟</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active" data-level="beginner">Beginner</button>
+            <button class="level-btn" data-level="intermediate">Intermediate</button>
+            <button class="level-btn" data-level="advanced">Advanced</button>
+        </div>
+
+        <div class="level-selector" style="margin-bottom: 20px;">
+            <span style="margin-right: 10px; color: #667eea; font-weight: bold;">🔊 Bot Voice:</span>
+            <button class="level-btn active" data-voice="female">Female 👩</button>
+            <button class="level-btn" data-voice="male">Male 👨</button>
+        </div>
+
+        <div class="status" id="status">Click "Start Recording" to chat with me! 🎤</div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                Hi! I'm so happy to meet you. What's your name?
+            </div>
+        </div>
+
+        <div class="translate-section" style="background: #e8f5e9; border: 2px solid #4CAF50; margin-bottom: 20px;">
+            <h3 style="color: #4CAF50;">💡 Example Answer</h3>
+            <div id="exampleAnswer" style="font-size: 18px; margin-bottom: 15px; color: #333;">
+                "My name is [your name]"
+            </div>
+            <button class="translate-btn" id="pronounceBtn" style="background: #4CAF50;">
+                🔊 Listen to Pronunciation
+            </button>
+        </div>
+
+        <div class="controls">
+            <button class="btn record-btn" id="recordBtn">
+                <span class="mic-icon"></span>
+                Start Recording
+            </button>
+            <button class="btn stop-btn" id="stopBtn" style="display: none;">
+                <span class="stop-icon"></span>
+                Stop Recording
+            </button>
+        </div>
+
+        <div class="translate-input" style="margin-bottom: 20px;">
+            <input type="text" id="textInput" placeholder="Or type your response here...">
+            <button class="translate-btn" id="sendBtn">Send ✉️</button>
+        </div>
+
+        <div class="translate-section">
+            <h3>📖 English to Malay Translator</h3>
+            <div class="translate-input">
+                <input type="text" id="translateInput" placeholder="Type an English word or phrase...">
+                <button class="translate-btn" id="translateBtn">Translate</button>
+            </div>
+            <div class="translation-result" id="translationResult">
+                Translation will appear here...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dictionary for English to Malay translations (comprehensive)
+        const dictionary = {
+            // Greetings & Basic
+            "hello": "helo / hai",
+            "hi": "hai",
+            "goodbye": "selamat tinggal",
+            "bye": "selamat tinggal",
+            "thank you": "terima kasih",
+            "thanks": "terima kasih",
+            "please": "tolong / sila",
+            "yes": "ya",
+            "no": "tidak",
+            "okay": "okey",
+            "ok": "okey",
+            
+            // Questions Words
+            "what": "apa",
+            "what's": "apa",
+            "how": "bagaimana",
+            "where": "di mana",
+            "when": "bila",
+            "who": "siapa",
+            "why": "mengapa",
+            "which": "yang mana",
+            
+            // Personal Info
+            "name": "nama",
+            "your": "awak punya / kamu",
+            "my": "saya punya",
+            "i": "saya",
+            "you": "awak / kamu",
+            "me": "saya",
+            "age": "umur",
+            "old": "tua / umur",
+            "year": "tahun",
+            "years": "tahun",
+            "years old": "tahun",
+            
+            // Feelings & Emotions
+            "feel": "rasa",
+            "feeling": "perasaan / rasa",
+            "how are you": "apa khabar",
+            "fine": "baik",
+            "good": "baik / bagus",
+            "great": "hebat / bagus sekali",
+            "excellent": "sangat baik",
+            "wonderful": "indah / bagus",
+            "amazing": "menakjubkan",
+            "fantastic": "hebat",
+            "bad": "buruk / tidak baik",
+            "happy": "gembira",
+            "sad": "sedih",
+            "tired": "penat / letih",
+            "excited": "teruja",
+            "nervous": "gugup",
+            "worried": "risau",
+            "angry": "marah",
+            "scared": "takut",
+            
+            // Colors
+            "color": "warna",
+            "colour": "warna",
+            "favorite": "kegemaran",
+            "favourite": "kegemaran",
+            "like": "suka",
+            "love": "cinta / sayang / suka sangat",
+            "red": "merah",
+            "blue": "biru",
+            "green": "hijau",
+            "yellow": "kuning",
+            "purple": "ungu",
+            "pink": "merah jambu",
+            "black": "hitam",
+            "white": "putih",
+            "orange": "oren",
+            "brown": "coklat",
+            "grey": "kelabu",
+            "gray": "kelabu",
+            
+            // Food & Eating
+            "eat": "makan",
+            "eating": "makan",
+            "drink": "minum",
+            "drinking": "minum",
+            "food": "makanan",
+            "breakfast": "sarapan",
+            "lunch": "makan tengahari",
+            "dinner": "makan malam",
+            "water": "air",
+            "rice": "nasi",
+            "noodles": "mee",
+            "pizza": "pizza",
+            "chicken": "ayam",
+            "fish": "ikan",
+            "fruit": "buah",
+            "vegetables": "sayur-sayuran",
+            "delicious": "sedap",
+            "yummy": "sedap",
+            "tasty": "sedap",
+            
+            // Family
+            "family": "keluarga",
+            "mother": "ibu",
+            "mom": "ibu / mak",
+            "father": "bapa / ayah",
+            "dad": "bapa / ayah",
+            "brother": "abang / adik lelaki",
+            "sister": "kakak / adik perempuan",
+            "parents": "ibu bapa",
+            "siblings": "adik-beradik",
+            "grandmother": "nenek",
+            "grandma": "nenek",
+            "grandfather": "datuk",
+            "grandpa": "datuk",
+            "uncle": "pakcik / bapa saudara",
+            "aunt": "makcik / ibu saudara",
+            "cousin": "sepupu",
+            "live": "tinggal / hidup",
+            "with": "dengan",
+            
+            // School & Learning
+            "school": "sekolah",
+            "study": "belajar",
+            "studying": "belajar",
+            "learn": "belajar",
+            "learning": "pembelajaran",
+            "english": "bahasa Inggeris",
+            "teacher": "guru",
+            "student": "pelajar",
+            "class": "kelas",
+            "book": "buku",
+            "read": "membaca",
+            "reading": "membaca",
+            "write": "menulis",
+            "writing": "menulis",
+            "homework": "kerja rumah",
+            "test": "ujian",
+            "exam": "peperiksaan",
+            
+            // Activities & Hobbies
+            "hobby": "hobi",
+            "hobbies": "hobi",
+            "play": "bermain",
+            "playing": "bermain",
+            "watch": "menonton",
+            "watching": "menonton",
+            "listen": "mendengar",
+            "listening": "mendengar",
+            "music": "muzik",
+            "song": "lagu",
+            "games": "permainan",
+            "game": "permainan",
+            "sports": "sukan",
+            "football": "bola sepak",
+            "basketball": "bola keranjang",
+            "badminton": "badminton",
+            "swimming": "berenang",
+            "drawing": "melukis",
+            "painting": "mengecat / melukis",
+            "singing": "menyanyi",
+            "dancing": "menari",
+            "fun": "seronok",
+            "enjoy": "seronok / suka",
+            
+            // Time
+            "today": "hari ini",
+            "yesterday": "semalam",
+            "tomorrow": "esok",
+            "morning": "pagi",
+            "afternoon": "petang",
+            "evening": "petang / malam",
+            "night": "malam",
+            "day": "hari",
+            "week": "minggu",
+            "weekend": "hujung minggu",
+            "month": "bulan",
+            "time": "masa / waktu",
+            "now": "sekarang",
+            "later": "kemudian",
+            "before": "sebelum",
+            "after": "selepas",
+            "always": "selalu",
+            "never": "tidak pernah",
+            "sometimes": "kadang-kadang",
+            "usually": "biasanya",
+            "often": "kerap / sering",
+            
+            // Places
+            "house": "rumah",
+            "home": "rumah",
+            "place": "tempat",
+            "park": "taman",
+            "mall": "pusat membeli-belah",
+            "market": "pasar",
+            "hospital": "hospital",
+            "library": "perpustakaan",
+            "beach": "pantai",
+            "mountain": "gunung",
+            "city": "bandar",
+            "village": "kampung",
+            "country": "negara",
+            
+            // Actions
+            "go": "pergi",
+            "going": "pergi",
+            "come": "datang",
+            "coming": "datang",
+            "went": "pergi (lepas)",
+            "do": "buat",
+            "doing": "buat",
+            "did": "buat (lepas)",
+            "make": "membuat",
+            "making": "membuat",
+            "made": "buat (lepas)",
+            "want": "mahu / nak",
+            "need": "perlukan",
+            "have": "ada / mempunyai",
+            "has": "ada / mempunyai",
+            "get": "dapat",
+            "got": "dapat (lepas)",
+            "take": "ambil",
+            "give": "beri",
+            "help": "tolong / bantuan",
+            "helping": "menolong",
+            "talk": "bercakap",
+            "talking": "bercakap",
+            "speak": "bercakap",
+            "speaking": "bercakap",
+            "tell": "beritahu",
+            "say": "kata",
+            "said": "kata (lepas)",
+            "think": "fikir",
+            "thinking": "berfikir",
+            "know": "tahu",
+            "understand": "faham",
+            "see": "nampak / lihat",
+            "look": "lihat",
+            "hear": "dengar",
+            
+            // Descriptions
+            "nice": "baik / bagus",
+            "beautiful": "cantik",
+            "pretty": "cantik",
+            "handsome": "kacak",
+            "big": "besar",
+            "small": "kecil",
+            "large": "besar",
+            "little": "kecil",
+            "tall": "tinggi",
+            "short": "pendek",
+            "long": "panjang",
+            "hot": "panas",
+            "cold": "sejuk",
+            "warm": "suam",
+            "cool": "sejuk",
+            "new": "baru",
+            "old": "lama / tua",
+            "young": "muda",
+            "fast": "laju / cepat",
+            "slow": "perlahan",
+            "easy": "mudah",
+            "difficult": "susah / sukar",
+            "hard": "susah / keras",
+            "important": "penting",
+            "interesting": "menarik",
+            "boring": "membosankan",
+            "funny": "kelakar / lucu",
+            "kind": "baik hati",
+            "friendly": "mesra",
+            "smart": "pandai / bijak",
+            "clever": "pandai / bijak",
+            
+            // Common Phrases
+            "nice to meet you": "seronok jumpa awak",
+            "see you": "jumpa lagi",
+            "excuse me": "tumpang tanya / maaf",
+            "sorry": "maaf",
+            "welcome": "selamat datang",
+            "you're welcome": "sama-sama",
+            "how old are you": "berapa umur awak",
+            "where are you from": "awak dari mana",
+            "what time": "pukul berapa",
+            
+            // Additional Words
+            "because": "kerana / sebab",
+            "but": "tetapi",
+            "and": "dan",
+            "or": "atau",
+            "so": "jadi",
+            "if": "jika / kalau",
+            "very": "sangat",
+            "really": "sungguh / betul-betul",
+            "too": "terlalu / juga",
+            "also": "juga",
+            "much": "banyak",
+            "many": "banyak",
+            "some": "beberapa",
+            "all": "semua",
+            "every": "setiap",
+            "can": "boleh",
+            "could": "boleh",
+            "will": "akan",
+            "would": "akan",
+            "should": "patut",
+            "must": "mesti"
+        };
+
+        // Conversation templates by level with expected keywords and example answers
+        const conversations = {
+            beginner: [
+                {
+                    question: "Hi! I'm so happy to meet you. What's your name?",
+                    keywords: ["name", "my name", "i am", "i'm", "call me"],
+                    example: "My name is Sarah. OR I'm Sarah."
+                },
+                {
+                    question: "Nice to meet you, {name}! What would you like to call me?",
+                    keywords: ["name", "call", "any", "letter", "word", "bella", "alex", "sam", "friend", "buddy"],
+                    example: "I want to call you Bella. OR Your name is Sam."
+                },
+                {
+                    question: "I love it! How are you today?",
+                    keywords: ["fine", "good", "great", "okay", "happy", "sad", "tired", "well", "not bad", "alright"],
+                    example: "I'm fine, thank you. OR I'm feeling great!"
+                },
+                {
+                    question: "I'm doing well too, thanks! I'm 2 years old. How old are you?",
+                    keywords: ["years old", "year old", "age", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
+                    example: "I am 15 years old. OR I'm fifteen."
+                },
+                {
+                    question: "Cool! I really love pink. What's your favorite color?",
+                    keywords: ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "orange", "color", "colour", "favorite", "favourite"],
+                    example: "My favorite color is blue. OR I like green."
+                },
+                {
+                    question: "That's a nice color! Do you like studying English?",
+                    keywords: ["yes", "no", "like", "love", "enjoy", "fun", "interesting", "difficult", "hard", "easy", "don't", "do not"],
+                    example: "Yes, I like English. OR It's a bit difficult."
+                },
+                {
+                    question: "I understand. I love eating pizza! What food do you like?",
+                    keywords: ["rice", "noodles", "pizza", "chicken", "fish", "fruit", "vegetables", "food", "like", "love", "favorite", "favourite"],
+                    example: "I like pizza and chicken. OR My favorite food is nasi lemak."
+                },
+                {
+                    question: "Yummy! I live with my family. Who do you live with?",
+                    keywords: ["mother", "father", "mom", "dad", "sister", "brother", "family", "parents", "siblings", "grandma", "grandpa", "alone"],
+                    example: "I live with my mom and dad. OR I have one brother."
+                },
+                {
+                    question: "That's nice! I like reading books. What do you do for fun?",
+                    keywords: ["play", "read", "watch", "listen", "music", "games", "sports", "drawing", "hobby", "like", "love"],
+                    example: "I like playing games. OR My hobby is drawing."
+                }
+            ],
+            intermediate: [
+                {
+                    question: "I wake up at 7 every day. What about you? Tell me about your morning routine.",
+                    keywords: ["wake up", "breakfast", "shower", "brush", "school", "morning", "routine", "get up", "eat", "ready"],
+                    example: "I wake up at 7 AM and eat breakfast. OR I brush my teeth first."
+                },
+                {
+                    question: "Sounds good! Last weekend I stayed home. What did you do last weekend?",
+                    keywords: ["went", "played", "watched", "visited", "stayed", "weekend", "saturday", "sunday", "did", "nothing"],
+                    example: "I went to the mall. OR I played with my friends."
+                },
+                {
+                    question: "Nice! I have a friend who's really kind. Tell me about your best friend.",
+                    keywords: ["friend", "kind", "funny", "helpful", "smart", "like", "together", "name", "play", "talk"],
+                    example: "My best friend is kind. OR We play together after school."
+                },
+                {
+                    question: "Friends are special! I want to help people learn. What do you want to be when you grow up?",
+                    keywords: ["want", "become", "doctor", "teacher", "engineer", "future", "dream", "job", "work", "be"],
+                    example: "I want to be a teacher. OR I want to become a doctor."
+                },
+                {
+                    question: "That's a great dream! My favorite place is the library. Where's your favorite place?",
+                    keywords: ["place", "park", "home", "beach", "library", "mall", "school", "favorite", "favourite", "like"],
+                    example: "My favorite place is the park. OR I like the beach."
+                },
+                {
+                    question: "Sounds lovely! I enjoy listening to pop music. What music or movies do you like?",
+                    keywords: ["like", "enjoy", "music", "movie", "song", "action", "comedy", "pop", "rock", "watch", "listen"],
+                    example: "I like pop music. OR I enjoy action movies."
+                }
+            ],
+            advanced: [
+                {
+                    question: "I think languages help us understand different cultures. Why do you think learning languages is important?",
+                    keywords: ["communicate", "important", "world", "understand", "connect", "culture", "global", "people", "talk", "learn"],
+                    example: "It helps us communicate with people. OR We can understand different cultures."
+                },
+                {
+                    question: "That's true! I once struggled with learning math. Can you share a challenge you overcame recently?",
+                    keywords: ["challenge", "difficult", "problem", "solved", "overcame", "learned", "experience", "hard", "struggled"],
+                    example: "I struggled with homework but asked for help. OR I overcame my fear of speaking."
+                },
+                {
+                    question: "I'm proud of you! Social media helps me stay connected but can be distracting. What do you think about social media?",
+                    keywords: ["advantage", "disadvantage", "social media", "connect", "information", "distraction", "privacy", "good", "bad", "think"],
+                    example: "It helps us connect but can waste time. OR Social media is good and bad."
+                },
+                {
+                    question: "Good point! I'd love to visit Japan someday. If you could travel anywhere, where would you go?",
+                    keywords: ["travel", "country", "visit", "culture", "experience", "learn", "explore", "go", "place", "want"],
+                    example: "I would visit Japan. OR I want to go to Paris."
+                },
+                {
+                    question: "That sounds amazing! Technology helps me learn new things easily. How has technology changed learning for you?",
+                    keywords: ["technology", "internet", "online", "computer", "learning", "education", "changed", "help", "easier", "study"],
+                    example: "Technology makes learning easier. OR We can study online now."
+                }
+            ]
+        };
+
+        let currentLevel = 'beginner';
+        let conversationIndex = 0;
+        let messagesCount = 0;
+        let recognition;
+        let isRecording = false;
+        let selectedVoice = 'female';
+        let userName = '';
+        let botName = 'MyBFF';
+        let currentExampleAnswer = '';
+
+        // Initialize Speech Recognition
+        function initSpeechRecognition() {
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                
+                if (!SpeechRecognition) {
+                    console.error('Speech recognition not available');
+                    return false;
+                }
+                
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    addMessage(transcript, 'user');
+                    processUserInput(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                        updateStatus('❌ Microphone permission denied. Please allow microphone access and refresh.');
+                    } else if (event.error === 'no-speech') {
+                        updateStatus('No speech detected. Please try again.');
+                    } else {
+                        updateStatus('Error: ' + event.error + '. Please try again.');
+                    }
+                    stopRecording();
+                };
+
+                recognition.onend = () => {
+                    stopRecording();
+                };
+                
+                return true;
+            } catch (error) {
+                console.error('Error initializing speech recognition:', error);
+                return false;
+            }
+        }
+        
+        const speechSupported = initSpeechRecognition();
+
+        // Remove emojis from text for speech
+        function removeEmojis(text) {
+            // Remove all emojis and emoji-like characters
+            return text
+                .replace(/[\u{1F600}-\u{1F64F}]/gu, '') // Emoticons
+                .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // Misc Symbols and Pictographs
+                .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // Transport and Map
+                .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '') // Flags
+                .replace(/[\u{2600}-\u{26FF}]/gu, '')   // Misc symbols
+                .replace(/[\u{2700}-\u{27BF}]/gu, '')   // Dingbats
+                .replace(/[\u{1F900}-\u{1F9FF}]/gu, '') // Supplemental Symbols and Pictographs
+                .replace(/[\u{1F018}-\u{1F270}]/gu, '') // Various asian characters
+                .replace(/[\u{238C}-\u{2454}]/gu, '')   // Misc items
+                .replace(/[\u{20D0}-\u{20FF}]/gu, '')   // Combining Diacritical Marks for Symbols
+                .replace(/[\uFE00-\uFE0F]/gu, '')       // Variation Selectors
+                .replace(/[\u200D]/gu, '')              // Zero Width Joiner
+                .trim();
+        }
+
+        // Text-to-Speech with sweet, friendly voice
+        function speak(text) {
+            // Remove emojis before speaking
+            const cleanText = removeEmojis(text);
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.75;  // Slower, more gentle pace
+            utterance.pitch = 1.3;   // Higher, sweeter pitch
+            utterance.volume = 1;
+            
+            // Try to find appropriate voice
+            const voices = window.speechSynthesis.getVoices();
+            
+            if (selectedVoice === 'female') {
+                // Prefer gentle, friendly female voices
+                const femaleVoice = voices.find(voice => 
+                    voice.name.includes('Samantha') ||
+                    voice.name.includes('Karen') ||
+                    voice.name.includes('Google US English Female') ||
+                    voice.name.includes('Microsoft Zira') ||
+                    voice.name.includes('Female')
+                );
+                if (femaleVoice) utterance.voice = femaleVoice;
+            } else {
+                // Prefer warm, friendly male voices
+                const maleVoice = voices.find(voice => 
+                    voice.name.includes('Daniel') ||
+                    voice.name.includes('Google US English Male') ||
+                    voice.name.includes('Microsoft David') ||
+                    voice.name.includes('Male')
+                );
+                if (maleVoice) utterance.voice = maleVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // Load voices
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            messagesCount++;
+            updateProgress();
+        }
+
+        // Update example answer display
+        function updateExampleAnswer(example) {
+            currentExampleAnswer = example;
+            document.getElementById('exampleAnswer').textContent = example;
+        }
+
+        // Process user input with intelligent checking
+        function processUserInput(input) {
+            const currentConvo = conversations[currentLevel][conversationIndex];
+            const lowerInput = input.toLowerCase();
+            
+            // Save user name from first question
+            if (conversationIndex === 0) {
+                const nameMatch = input.match(/(?:my name is|i am|i'm|call me)\s+(\w+)/i);
+                if (nameMatch) {
+                    userName = nameMatch[1];
+                } else {
+                    // Try to extract just the name if they only said their name
+                    const words = input.trim().split(' ');
+                    if (words.length <= 2) {
+                        userName = words[words.length - 1];
+                    }
+                }
+            }
+            
+            // Save bot name from second question
+            if (conversationIndex === 1) {
+                const botNameMatch = input.match(/(?:call you|name is|you're|your name)\s+(\w+)/i);
+                if (botNameMatch) {
+                    botName = botNameMatch[1];
+                } else {
+                    // Try to extract just the name
+                    const words = input.trim().split(' ');
+                    if (words.length <= 2) {
+                        botName = words[words.length - 1];
+                    }
+                }
+            }
+            
+            // Check if answer is relevant to the question
+            const hasKeyword = currentConvo.keywords.some(keyword => 
+                lowerInput.includes(keyword.toLowerCase())
+            );
+            
+            setTimeout(() => {
+                let botResponse = '';
+                
+                if (hasKeyword) {
+                    // Correct answer - give praise!
+                    const praises = [
+                        "Great! ",
+                        "Nice! ",
+                        "Good job! ",
+                        "Well done! ",
+                        "Perfect! ",
+                        "That's right! ",
+                        "Awesome! "
+                    ];
+                    
+                    botResponse = praises[Math.floor(Math.random() * praises.length)];
+                    
+                    // Move to next question
+                    conversationIndex++;
+                    
+                    if (conversationIndex < conversations[currentLevel].length) {
+                        const nextConvo = conversations[currentLevel][conversationIndex];
+                        let nextQuestion = nextConvo.question;
+                        
+                        // Personalize with user's name if available
+                        if (userName) {
+                            nextQuestion = nextQuestion.replace('{name}', userName);
+                        }
+                        
+                        botResponse += nextQuestion;
+                        
+                        // Update example answer
+                        updateExampleAnswer(nextConvo.example);
+                    } else {
+                        // Completed level
+                        const congratsMessages = {
+                            beginner: "Great work! You completed the beginner level. Want to try intermediate?",
+                            intermediate: "Excellent! You finished intermediate level. Ready for advanced?",
+                            advanced: "Amazing! You completed all levels. Keep practicing!"
+                        };
+                        
+                        botResponse += congratsMessages[currentLevel];
+                        conversationIndex = 0;
+                    }
+                } else {
+                    // Answer doesn't match the question - give gentle correction
+                    botResponse = "Hmm, that doesn't quite answer my question. ";
+                    
+                    // Give specific feedback based on what was asked
+                    if (conversationIndex === 0 && !lowerInput.includes('name')) {
+                        botResponse += "I asked for your name. ";
+                    } else if (conversationIndex === 2 && !lowerInput.includes('fine') && !lowerInput.includes('good') && !lowerInput.includes('feel')) {
+                        botResponse += "I asked how you're feeling. ";
+                    } else if (conversationIndex === 3 && !lowerInput.includes('year') && !lowerInput.includes('old') && !lowerInput.includes('age')) {
+                        botResponse += "I asked about your age. ";
+                    } else {
+                        botResponse += "Let me ask again. ";
+                    }
+                    
+                    botResponse += currentConvo.question;
+                    
+                    if (userName) {
+                        botResponse = botResponse.replace('{name}', userName);
+                    }
+                    
+                    // Keep same example answer
+                    updateExampleAnswer(currentConvo.example);
+                }
+                
+                addMessage(botResponse, 'bot');
+                speak(botResponse);
+            }, 1000);
+        }
+
+        // Recording controls
+        document.getElementById('recordBtn').addEventListener('click', () => {
+            if (!speechSupported) {
+                updateStatus('❌ Speech recognition not supported. Please use Chrome or Edge browser.');
+                alert('Speech recognition is not supported in this browser.\n\nPlease use:\n✅ Google Chrome\n✅ Microsoft Edge\n\nMake sure you are using the desktop version.');
+                return;
+            }
+            
+            if (recognition) {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('recordBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'flex';
+                    document.getElementById('recordBtn').classList.add('recording');
+                    updateStatus('🎤 Listening... Speak now!');
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    updateStatus('❌ Could not start recording. Please refresh and try again.');
+                    stopRecording();
+                }
+            }
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            stopRecording();
+        });
+
+        function stopRecording() {
+            if (recognition && isRecording) {
+                recognition.stop();
+            }
+            isRecording = false;
+            document.getElementById('recordBtn').style.display = 'flex';
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('recordBtn').classList.remove('recording');
+            updateStatus('Click "Start Recording" to chat with me again! 🎤');
+        }
+
+        // Level selection
+        document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Check if it's a level button or voice button
+                if (btn.dataset.level) {
+                    // Level selection
+                    document.querySelectorAll('[data-level]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentLevel = btn.dataset.level;
+                    conversationIndex = 0;
+                    messagesCount = 0;
+                    userName = '';
+                    updateProgress();
+                    
+                    document.getElementById('chatContainer').innerHTML = '';
+                    const firstConvo = conversations[currentLevel][0];
+                    const welcomeMessage = `Let's practice ${currentLevel} level English! ${firstConvo.question}`;
+                    addMessage(welcomeMessage, 'bot');
+                    speak(welcomeMessage);
+                    updateExampleAnswer(firstConvo.example);
+                } else if (btn.dataset.voice) {
+                    // Voice selection
+                    document.querySelectorAll('[data-voice]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedVoice = btn.dataset.voice;
+                    
+                    // Test the new voice
+                    const testMessage = selectedVoice === 'female' 
+                        ? "Hello! I'm your female voice assistant." 
+                        : "Hello! I'm your male voice assistant.";
+                    speak(testMessage);
+                }
+            });
+        });
+
+        // Pronounce example answer button
+        document.getElementById('pronounceBtn').addEventListener('click', () => {
+            if (currentExampleAnswer) {
+                speak(currentExampleAnswer);
+                updateStatus('🔊 Listen carefully, then try saying it yourself! You can do it!');
+            }
+        });
+
+        // Translation
+        document.getElementById('translateBtn').addEventListener('click', translateWord);
+        document.getElementById('translateInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') translateWord();
+        });
+
+        function translateWord() {
+            const input = document.getElementById('translateInput').value.toLowerCase().trim();
+            const resultDiv = document.getElementById('translationResult');
+            
+            if (!input) {
+                resultDiv.innerHTML = '⚠️ Please enter a word or phrase to translate.';
+                return;
+            }
+
+            if (dictionary[input]) {
+                resultDiv.innerHTML = `
+                    <strong>"${input}"</strong> in Malay: <br>
+                    <span style="color: #667eea; font-size: 20px; font-weight: bold;">${dictionary[input]}</span>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    ℹ️ Translation for "<strong>${input}</strong>" not found in basic dictionary. 
+                    <br><small>Try searching online or ask your teacher!</small>
+                `;
+            }
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function updateProgress() {
+            const totalMessages = conversations[currentLevel].length;
+            const progress = Math.min((messagesCount / (totalMessages * 2)) * 100, 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Initial speech
+        window.addEventListener('load', () => {
+            const firstConvo = conversations[currentLevel][0];
+            speak(firstConvo.question);
+            updateExampleAnswer(firstConvo.example);
+            
+            // Show browser compatibility message
+            if (!speechSupported) {
+                setTimeout(() => {
+                    updateStatus('⚠️ Voice input not available. Please use text input or switch to Chrome/Edge browser.');
+                }, 2000);
+            }
+        });
+
+        // Text input functionality
+        document.getElementById('sendBtn').addEventListener('click', sendTextMessage);
+        document.getElementById('textInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendTextMessage();
+        });
+
+        function sendTextMessage() {
+            const input = document.getElementById('textInput').value.trim();
+            if (input) {
+                addMessage(input, 'user');
+                processUserInput(input);
+                document.getElementById('textInput').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
