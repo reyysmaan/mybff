@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Practice Bot</title>
+    <title>MyBFF - My Best Friend Forever</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -36,8 +36,10 @@
         }
 
         .header h1 {
-            color: #667eea;
+            color: #FF6B9D;
             margin-bottom: 10px;
+            font-size: 42px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .level-selector {
@@ -50,22 +52,24 @@
 
         .level-btn {
             padding: 10px 20px;
-            border: 2px solid #667eea;
+            border: 2px solid #FF6B9D;
             background: white;
-            color: #667eea;
+            color: #FF6B9D;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            font-size: 16px;
         }
 
         .level-btn:hover {
-            background: #667eea;
+            background: #FF6B9D;
             color: white;
+            transform: scale(1.05);
         }
 
         .level-btn.active {
-            background: #667eea;
+            background: #FF6B9D;
             color: white;
         }
 
@@ -94,15 +98,17 @@
         }
 
         .bot-message {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(135deg, #A8E6CF 0%, #81C784 100%);
+            color: #2E7D32;
             margin-right: auto;
+            font-weight: 500;
         }
 
         .user-message {
-            background: #e3f2fd;
-            color: #333;
+            background: linear-gradient(135deg, #FFD6E8 0%, #FFC1E3 100%);
+            color: #D81B60;
             margin-left: auto;
+            font-weight: 500;
         }
 
         .controls {
@@ -127,12 +133,14 @@
         }
 
         .record-btn {
-            background: #4CAF50;
-            color: white;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #663300;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
         }
 
         .record-btn:hover {
-            background: #45a049;
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            transform: scale(1.05);
         }
 
         .record-btn.recording {
@@ -181,17 +189,19 @@
         }
 
         .translate-btn {
-            background: #667eea;
+            background: #FF6B9D;
             color: white;
             padding: 12px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: all 0.3s;
         }
 
         .translate-btn:hover {
-            background: #5568d3;
+            background: #E91E63;
+            transform: scale(1.05);
         }
 
         .translation-result {
@@ -244,7 +254,7 @@
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #FF6B9D, #FFD700, #A8E6CF, #667eea);
             height: 100%;
             width: 0%;
             transition: width 0.3s;
@@ -272,8 +282,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🗣️ English Practice Bot</h1>
-            <p>Practice your English speaking skills with AI!</p>
+            <h1>💙 MyBFF 💙</h1>
+            <p style="font-size: 18px;">Your Best Friend Forever for English Practice! 🌟</p>
         </div>
 
         <div class="progress-bar">
@@ -292,11 +302,11 @@
             <button class="level-btn" data-voice="male">Male 👨</button>
         </div>
 
-        <div class="status" id="status">Click "Start Recording" to begin speaking</div>
+        <div class="status" id="status">Click "Start Recording" to chat with me! 🎤</div>
 
         <div class="chat-container" id="chatContainer">
             <div class="message bot-message">
-                Hello! What's your name? I'd love to know!
+                Hi there, friend! 😊 What's your name? I'm so excited to meet you!
             </div>
         </div>
 
@@ -339,157 +349,412 @@
     </div>
 
     <script>
-        // Dictionary for English to Malay translations (basic words)
+        // Dictionary for English to Malay translations (comprehensive)
         const dictionary = {
+            // Greetings & Basic
             "hello": "helo / hai",
+            "hi": "hai",
             "goodbye": "selamat tinggal",
+            "bye": "selamat tinggal",
             "thank you": "terima kasih",
+            "thanks": "terima kasih",
             "please": "tolong / sila",
             "yes": "ya",
             "no": "tidak",
-            "name": "nama",
-            "how": "bagaimana",
+            "okay": "okey",
+            "ok": "okey",
+            
+            // Questions Words
             "what": "apa",
+            "what's": "apa",
+            "how": "bagaimana",
             "where": "di mana",
             "when": "bila",
             "who": "siapa",
             "why": "mengapa",
-            "good": "baik",
-            "bad": "buruk",
+            "which": "yang mana",
+            
+            // Personal Info
+            "name": "nama",
+            "your": "awak punya / kamu",
+            "my": "saya punya",
+            "i": "saya",
+            "you": "awak / kamu",
+            "me": "saya",
+            "age": "umur",
+            "old": "tua / umur",
+            "year": "tahun",
+            "years": "tahun",
+            "years old": "tahun",
+            
+            // Feelings & Emotions
+            "feel": "rasa",
+            "feeling": "perasaan / rasa",
+            "how are you": "apa khabar",
+            "fine": "baik",
+            "good": "baik / bagus",
+            "great": "hebat / bagus sekali",
+            "excellent": "sangat baik",
+            "wonderful": "indah / bagus",
+            "amazing": "menakjubkan",
+            "fantastic": "hebat",
+            "bad": "buruk / tidak baik",
             "happy": "gembira",
             "sad": "sedih",
+            "tired": "penat / letih",
+            "excited": "teruja",
+            "nervous": "gugup",
+            "worried": "risau",
+            "angry": "marah",
+            "scared": "takut",
+            
+            // Colors
+            "color": "warna",
+            "colour": "warna",
+            "favorite": "kegemaran",
+            "favourite": "kegemaran",
+            "like": "suka",
+            "love": "cinta / sayang / suka sangat",
+            "red": "merah",
+            "blue": "biru",
+            "green": "hijau",
+            "yellow": "kuning",
+            "purple": "ungu",
+            "pink": "merah jambu",
+            "black": "hitam",
+            "white": "putih",
+            "orange": "oren",
+            "brown": "coklat",
+            "grey": "kelabu",
+            "gray": "kelabu",
+            
+            // Food & Eating
             "eat": "makan",
+            "eating": "makan",
             "drink": "minum",
-            "water": "air",
+            "drinking": "minum",
             "food": "makanan",
-            "house": "rumah",
-            "school": "sekolah",
-            "book": "buku",
-            "friend": "kawan",
+            "breakfast": "sarapan",
+            "lunch": "makan tengahari",
+            "dinner": "makan malam",
+            "water": "air",
+            "rice": "nasi",
+            "noodles": "mee",
+            "pizza": "pizza",
+            "chicken": "ayam",
+            "fish": "ikan",
+            "fruit": "buah",
+            "vegetables": "sayur-sayuran",
+            "delicious": "sedap",
+            "yummy": "sedap",
+            "tasty": "sedap",
+            
+            // Family
             "family": "keluarga",
             "mother": "ibu",
-            "father": "bapa",
+            "mom": "ibu / mak",
+            "father": "bapa / ayah",
+            "dad": "bapa / ayah",
             "brother": "abang / adik lelaki",
             "sister": "kakak / adik perempuan",
+            "parents": "ibu bapa",
+            "siblings": "adik-beradik",
+            "grandmother": "nenek",
+            "grandma": "nenek",
+            "grandfather": "datuk",
+            "grandpa": "datuk",
+            "uncle": "pakcik / bapa saudara",
+            "aunt": "makcik / ibu saudara",
+            "cousin": "sepupu",
+            "live": "tinggal / hidup",
+            "with": "dengan",
+            
+            // School & Learning
+            "school": "sekolah",
+            "study": "belajar",
+            "studying": "belajar",
+            "learn": "belajar",
+            "learning": "pembelajaran",
+            "english": "bahasa Inggeris",
             "teacher": "guru",
             "student": "pelajar",
-            "morning": "pagi",
-            "afternoon": "petang",
-            "evening": "malam",
-            "night": "malam",
+            "class": "kelas",
+            "book": "buku",
+            "read": "membaca",
+            "reading": "membaca",
+            "write": "menulis",
+            "writing": "menulis",
+            "homework": "kerja rumah",
+            "test": "ujian",
+            "exam": "peperiksaan",
+            
+            // Activities & Hobbies
+            "hobby": "hobi",
+            "hobbies": "hobi",
+            "play": "bermain",
+            "playing": "bermain",
+            "watch": "menonton",
+            "watching": "menonton",
+            "listen": "mendengar",
+            "listening": "mendengar",
+            "music": "muzik",
+            "song": "lagu",
+            "games": "permainan",
+            "game": "permainan",
+            "sports": "sukan",
+            "football": "bola sepak",
+            "basketball": "bola keranjang",
+            "badminton": "badminton",
+            "swimming": "berenang",
+            "drawing": "melukis",
+            "painting": "mengecat / melukis",
+            "singing": "menyanyi",
+            "dancing": "menari",
+            "fun": "seronok",
+            "enjoy": "seronok / suka",
+            
+            // Time
             "today": "hari ini",
             "yesterday": "semalam",
             "tomorrow": "esok",
+            "morning": "pagi",
+            "afternoon": "petang",
+            "evening": "petang / malam",
+            "night": "malam",
+            "day": "hari",
+            "week": "minggu",
+            "weekend": "hujung minggu",
+            "month": "bulan",
+            "time": "masa / waktu",
+            "now": "sekarang",
+            "later": "kemudian",
+            "before": "sebelum",
+            "after": "selepas",
+            "always": "selalu",
+            "never": "tidak pernah",
+            "sometimes": "kadang-kadang",
+            "usually": "biasanya",
+            "often": "kerap / sering",
+            
+            // Places
+            "house": "rumah",
+            "home": "rumah",
+            "place": "tempat",
+            "park": "taman",
+            "mall": "pusat membeli-belah",
+            "market": "pasar",
+            "hospital": "hospital",
+            "library": "perpustakaan",
+            "beach": "pantai",
+            "mountain": "gunung",
+            "city": "bandar",
+            "village": "kampung",
+            "country": "negara",
+            
+            // Actions
+            "go": "pergi",
+            "going": "pergi",
+            "come": "datang",
+            "coming": "datang",
+            "went": "pergi (lepas)",
+            "do": "buat",
+            "doing": "buat",
+            "did": "buat (lepas)",
+            "make": "membuat",
+            "making": "membuat",
+            "made": "buat (lepas)",
+            "want": "mahu / nak",
+            "need": "perlukan",
+            "have": "ada / mempunyai",
+            "has": "ada / mempunyai",
+            "get": "dapat",
+            "got": "dapat (lepas)",
+            "take": "ambil",
+            "give": "beri",
             "help": "tolong / bantuan",
-            "sorry": "maaf",
-            "welcome": "selamat datang",
+            "helping": "menolong",
+            "talk": "bercakap",
+            "talking": "bercakap",
+            "speak": "bercakap",
+            "speaking": "bercakap",
+            "tell": "beritahu",
+            "say": "kata",
+            "said": "kata (lepas)",
+            "think": "fikir",
+            "thinking": "berfikir",
+            "know": "tahu",
+            "understand": "faham",
+            "see": "nampak / lihat",
+            "look": "lihat",
+            "hear": "dengar",
+            
+            // Descriptions
+            "nice": "baik / bagus",
             "beautiful": "cantik",
+            "pretty": "cantik",
+            "handsome": "kacak",
             "big": "besar",
             "small": "kecil",
+            "large": "besar",
+            "little": "kecil",
+            "tall": "tinggi",
+            "short": "pendek",
+            "long": "panjang",
             "hot": "panas",
             "cold": "sejuk",
-            "love": "cinta / sayang"
+            "warm": "suam",
+            "cool": "sejuk",
+            "new": "baru",
+            "old": "lama / tua",
+            "young": "muda",
+            "fast": "laju / cepat",
+            "slow": "perlahan",
+            "easy": "mudah",
+            "difficult": "susah / sukar",
+            "hard": "susah / keras",
+            "important": "penting",
+            "interesting": "menarik",
+            "boring": "membosankan",
+            "funny": "kelakar / lucu",
+            "kind": "baik hati",
+            "friendly": "mesra",
+            "smart": "pandai / bijak",
+            "clever": "pandai / bijak",
+            
+            // Common Phrases
+            "nice to meet you": "seronok jumpa awak",
+            "see you": "jumpa lagi",
+            "excuse me": "tumpang tanya / maaf",
+            "sorry": "maaf",
+            "welcome": "selamat datang",
+            "you're welcome": "sama-sama",
+            "how old are you": "berapa umur awak",
+            "where are you from": "awak dari mana",
+            "what time": "pukul berapa",
+            
+            // Additional Words
+            "because": "kerana / sebab",
+            "but": "tetapi",
+            "and": "dan",
+            "or": "atau",
+            "so": "jadi",
+            "if": "jika / kalau",
+            "very": "sangat",
+            "really": "sungguh / betul-betul",
+            "too": "terlalu / juga",
+            "also": "juga",
+            "much": "banyak",
+            "many": "banyak",
+            "some": "beberapa",
+            "all": "semua",
+            "every": "setiap",
+            "can": "boleh",
+            "could": "boleh",
+            "will": "akan",
+            "would": "akan",
+            "should": "patut",
+            "must": "mesti"
         };
 
         // Conversation templates by level with expected keywords and example answers
         const conversations = {
             beginner: [
                 {
-                    question: "Hello! What's your name? I'd love to know!",
+                    question: "Hi there, friend! 😊 What's your name? I'm so excited to meet you!",
                     keywords: ["name", "my name", "i am", "i'm", "call me"],
                     example: "My name is [your name]. For example: My name is Sarah."
                 },
                 {
-                    question: "Nice to meet you, {name}! How are you feeling today?",
+                    question: "Aww, what a lovely name! 💕 I'm so happy to talk with you, {name}! How are you feeling today, sweetie?",
                     keywords: ["fine", "good", "great", "okay", "happy", "sad", "tired", "well"],
                     example: "I am fine, thank you. OR I'm feeling great today!"
                 },
                 {
-                    question: "That's wonderful to hear! How old are you?",
+                    question: "That's wonderful to hear, dear! 🌟 Can you tell me how old you are? Don't worry, age is just a number!",
                     keywords: ["years old", "year old", "age", "10", "11", "12", "13", "14", "15", "16", "17", "18"],
                     example: "I am 15 years old. OR I'm fifteen."
                 },
                 {
-                    question: "Great! Tell me, what's your favorite color?",
+                    question: "Awesome! 🎨 Now here's a fun question - what's your favorite color? I love hearing about colors!",
                     keywords: ["red", "blue", "green", "yellow", "purple", "pink", "black", "white", "orange", "color", "colour"],
                     example: "My favorite color is blue. OR I like green."
                 },
                 {
-                    question: "Nice choice! Do you like studying English? Why or why not?",
+                    question: "Ooh, that's such a pretty color! 💙 Tell me, do you like studying English? Be honest with me!",
                     keywords: ["yes", "no", "like", "love", "enjoy", "fun", "interesting", "difficult", "hard", "easy"],
                     example: "Yes, I like English because it is interesting. OR I enjoy learning English."
                 },
                 {
-                    question: "That's great! What kind of food do you like to eat?",
+                    question: "You're doing so well! 🍕 Now, let's talk about food - yum! What kind of food makes you happy?",
                     keywords: ["rice", "noodles", "pizza", "chicken", "fish", "fruit", "vegetables", "food", "like", "love"],
                     example: "I like to eat pizza and chicken. OR My favorite food is nasi lemak."
                 },
                 {
-                    question: "Yummy! Tell me about your family. Who lives with you?",
+                    question: "Mmm, delicious! 👨‍👩‍👧‍👦 Now tell me about your lovely family. Who do you live with?",
                     keywords: ["mother", "father", "mom", "dad", "sister", "brother", "family", "parents", "siblings"],
                     example: "I live with my mother, father, and one brother. OR I have a small family."
                 },
                 {
-                    question: "That's lovely! What do you like to do for fun? Any hobbies?",
+                    question: "Your family sounds amazing! 🎮 One more question, buddy - what do you like to do for fun? Tell me about your hobbies!",
                     keywords: ["play", "read", "watch", "listen", "music", "games", "sports", "drawing", "hobby"],
                     example: "I like to play games and read books. OR My hobby is playing football."
                 }
             ],
             intermediate: [
                 {
-                    question: "Hi there! Can you describe what you usually do every morning?",
+                    question: "Hello, my friend! 🌅 I'm curious - can you tell me about your morning routine? What do you do when you wake up?",
                     keywords: ["wake up", "breakfast", "shower", "brush", "school", "morning", "routine"],
                     example: "Every morning, I wake up at 7 AM, brush my teeth, eat breakfast, and go to school."
                 },
                 {
-                    question: "Interesting routine! What did you do last weekend? Tell me about it!",
+                    question: "That sounds like a good routine! 🎉 So, what fun things did you do last weekend? I'd love to hear about it!",
                     keywords: ["went", "played", "watched", "visited", "stayed", "weekend", "saturday", "sunday"],
                     example: "Last weekend, I went to the mall with my family and watched a movie."
                 },
                 {
-                    question: "Sounds fun! Can you tell me about your best friend? What makes them special?",
+                    question: "How nice! 👯 Tell me about your best friend - they must be really special! What do you like about them?",
                     keywords: ["friend", "kind", "funny", "helpful", "smart", "like", "together"],
                     example: "My best friend is very kind and funny. We like to play together after school."
                 },
                 {
-                    question: "That's wonderful! What do you want to be when you grow up?",
+                    question: "Aww, friendship is so beautiful! 🌈 Now, dream big with me - what do you want to be when you grow up?",
                     keywords: ["want", "become", "doctor", "teacher", "engineer", "future", "dream", "job"],
                     example: "I want to become a teacher because I enjoy helping people learn."
                 },
                 {
-                    question: "Great ambition! Describe your favorite place. Where is it and why do you like it?",
+                    question: "What an amazing dream! ✨ Everyone has a special place they love - can you describe your favorite place for me?",
                     keywords: ["place", "park", "home", "beach", "library", "peaceful", "beautiful", "like", "because"],
                     example: "My favorite place is the park near my house because it is peaceful and beautiful."
                 },
                 {
-                    question: "Nice! What kind of music or movies do you enjoy?",
+                    question: "That sounds so lovely! 🎵 Last question - what kind of music or movies make you smile?",
                     keywords: ["like", "enjoy", "music", "movie", "song", "action", "comedy", "pop", "rock"],
                     example: "I enjoy pop music and action movies because they are exciting."
                 }
             ],
             advanced: [
                 {
-                    question: "Hello! In your opinion, why is learning languages important in today's world?",
+                    question: "Hey there, smart cookie! 🌍 I'd love to hear your thoughts - why do you think learning languages is important in our world today?",
                     keywords: ["communicate", "important", "world", "understand", "connect", "culture", "global"],
                     example: "Learning languages is important because it helps us communicate with people from different cultures and understand the world better."
                 },
                 {
-                    question: "Well said! Can you tell me about a challenge you faced recently and how you overcame it?",
+                    question: "Wow, such wisdom! 💪 We all face challenges - can you share a recent challenge you had and how you were brave enough to overcome it?",
                     keywords: ["challenge", "difficult", "problem", "solved", "overcame", "learned", "experience"],
                     example: "Recently, I struggled with math homework, but I overcame it by asking my teacher for help and practicing more."
                 },
                 {
-                    question: "That shows good problem-solving! What do you think are the advantages and disadvantages of social media?",
+                    question: "You're so strong for doing that! 📱 Here's a big question - what do you think are the good and not-so-good things about social media?",
                     keywords: ["advantage", "disadvantage", "social media", "connect", "information", "distraction", "privacy"],
                     example: "Social media helps us stay connected with friends, but it can also be distracting and affect our privacy."
                 },
                 {
-                    question: "Interesting perspective! If you could travel anywhere in the world, where would you go and why?",
+                    question: "Such a balanced answer! ✈️ Let's dream together - if you could travel anywhere in the whole world, where would you go and why?",
                     keywords: ["travel", "country", "visit", "culture", "experience", "learn", "explore"],
                     example: "I would travel to Japan because I want to experience their unique culture and try authentic Japanese food."
                 },
                 {
-                    question: "Sounds amazing! How has technology changed the way students learn today?",
+                    question: "That sounds incredible! 💻 One more thoughtful question - how do you think technology has changed the way we learn today?",
                     keywords: ["technology", "internet", "online", "computer", "learning", "education", "changed"],
                     example: "Technology has made learning easier through online resources and educational apps that help us study anytime, anywhere."
                 }
@@ -551,29 +816,34 @@
         
         const speechSupported = initSpeechRecognition();
 
-        // Text-to-Speech with voice selection
+        // Text-to-Speech with sweet, friendly voice
         function speak(text) {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            utterance.pitch = 1;
+            utterance.rate = 0.75;  // Slower, more gentle pace
+            utterance.pitch = 1.3;   // Higher, sweeter pitch
+            utterance.volume = 1;
             
             // Try to find appropriate voice
             const voices = window.speechSynthesis.getVoices();
             
             if (selectedVoice === 'female') {
+                // Prefer gentle, friendly female voices
                 const femaleVoice = voices.find(voice => 
-                    voice.name.includes('Female') || 
                     voice.name.includes('Samantha') ||
+                    voice.name.includes('Karen') ||
                     voice.name.includes('Google US English Female') ||
-                    voice.name.includes('Microsoft Zira')
+                    voice.name.includes('Microsoft Zira') ||
+                    voice.name.includes('Female')
                 );
                 if (femaleVoice) utterance.voice = femaleVoice;
             } else {
+                // Prefer warm, friendly male voices
                 const maleVoice = voices.find(voice => 
-                    voice.name.includes('Male') || 
+                    voice.name.includes('Daniel') ||
                     voice.name.includes('Google US English Male') ||
-                    voice.name.includes('Microsoft David')
+                    voice.name.includes('Microsoft David') ||
+                    voice.name.includes('Male')
                 );
                 if (maleVoice) utterance.voice = maleVoice;
             }
@@ -629,13 +899,16 @@
                 if (hasKeyword) {
                     // Correct answer - give praise!
                     const praises = [
-                        "Excellent! Great pronunciation! ",
-                        "Very good! Well done! ",
-                        "Perfect! You said that very clearly! ",
-                        "Wonderful answer! ",
-                        "Amazing! Keep it up! ",
-                        "Great job! I understood you perfectly! ",
-                        "Fantastic! You're doing really well! "
+                        "Yay! You're amazing! 🌟 ",
+                        "Woohoo! That was perfect! 🎉 ",
+                        "You're such a star! Great job! ⭐ ",
+                        "Aww, you said that so well! I'm proud of you! 💖 ",
+                        "Wow! You're getting better and better! 🚀 ",
+                        "That's fantastic, sweetie! Keep shining! ✨ ",
+                        "You nailed it! High five! 🙌 ",
+                        "Beautiful answer! You're so smart! 🧠 ",
+                        "I'm so impressed! You're doing wonderfully! 🌈 ",
+                        "Excellent work, friend! You make me so happy! 😊 "
                     ];
                     
                     botResponse = praises[Math.floor(Math.random() * praises.length)];
@@ -659,27 +932,27 @@
                     } else {
                         // Completed level
                         const congratsMessages = {
-                            beginner: "🎉 Amazing work! You've completed the beginner level! You're speaking so well! Ready to try intermediate level?",
-                            intermediate: "🌟 Excellent progress! You've finished intermediate level! Your English is getting better! Want to challenge yourself with advanced level?",
-                            advanced: "🏆 Outstanding! You've completed all levels! Your English speaking skills are impressive! Keep practicing every day!"
+                            beginner: "🎉🎊 WOW! You did it, superstar! You've completed the beginner level! I'm SO proud of you! You're speaking English so well! Ready to be even more awesome and try intermediate level? 💪✨",
+                            intermediate: "🌟🏆 Oh my goodness! You've finished intermediate level! You're incredible! Your English is getting SO much better! I knew you could do it! Want to challenge yourself with advanced level? You've got this! 🚀💖",
+                            advanced: "🏆👑 AMAZING! You're a CHAMPION! You've completed ALL the levels! Your English speaking skills are absolutely FANTASTIC! I'm so, so, SO proud of you! Keep practicing every day and you'll be unstoppable! You're my hero! 🌈⭐🎉"
                         };
                         
                         botResponse += congratsMessages[currentLevel];
                         conversationIndex = 0;
                     }
                 } else {
-                    // Answer doesn't match the question - give correction
-                    botResponse = "Hmm, I don't think that answers my question. ";
+                    // Answer doesn't match the question - give gentle correction
+                    botResponse = "Oops, I think we got a little mixed up there, buddy! 😅 ";
                     
                     // Give specific feedback based on what was asked
                     if (conversationIndex === 0 && !lowerInput.includes('name')) {
-                        botResponse += "I asked about your NAME. Can you tell me your name? ";
+                        botResponse += "I asked about your NAME, sweetie. What should I call you? 😊 ";
                     } else if (conversationIndex === 1 && !lowerInput.includes('fine') && !lowerInput.includes('good') && !lowerInput.includes('feel')) {
-                        botResponse += "I asked HOW YOU ARE FEELING. Are you fine? Good? Happy? ";
+                        botResponse += "I asked HOW YOU'RE FEELING today. Are you happy? Tired? Let me know! 💕 ";
                     } else if (conversationIndex === 2 && !lowerInput.includes('year') && !lowerInput.includes('old') && !lowerInput.includes('age')) {
-                        botResponse += "I asked about your AGE. How old are you? ";
+                        botResponse += "I asked about your AGE, dear. How many years old are you? 🎂 ";
                     } else {
-                        botResponse += "Let me ask again: ";
+                        botResponse += "Let me ask that question again, okay? 🤗 ";
                     }
                     
                     botResponse += currentConvo.question;
@@ -733,7 +1006,7 @@
             document.getElementById('recordBtn').style.display = 'flex';
             document.getElementById('stopBtn').style.display = 'none';
             document.getElementById('recordBtn').classList.remove('recording');
-            updateStatus('Click "Start Recording" to speak again');
+            updateStatus('Click "Start Recording" to chat with me again! 🎤');
         }
 
         // Level selection
@@ -775,7 +1048,7 @@
         document.getElementById('pronounceBtn').addEventListener('click', () => {
             if (currentExampleAnswer) {
                 speak(currentExampleAnswer);
-                updateStatus('🔊 Listen carefully and then try to repeat it!');
+                updateStatus('🔊 Listen carefully, then try saying it yourself! You can do it!');
             }
         });
 
